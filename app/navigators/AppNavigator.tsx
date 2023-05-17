@@ -4,11 +4,7 @@
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
-import {
-  DarkTheme,
-  DefaultTheme,
-  NavigationContainer,
-} from "@react-navigation/native"
+import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { observer } from "mobx-react-lite"
 import React from "react"
@@ -16,6 +12,8 @@ import { useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
+import { useAuth } from "app/hooks/useAuth"
+import { TabNavigator } from "./TabNavigator"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -33,6 +31,29 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 export type AppStackParamList = {
   Welcome: undefined
   // 🔥 Your screens go here
+  Splash: undefined
+  WalkthroughScreen: undefined
+  SignUp: undefined
+  UserInfo: {
+    email_address: string
+    password: string
+  }
+  UserPin: undefined
+  UserPinConfirmation: {
+    pin: string
+  }
+  Feedback: {
+    title?: string
+    description?: string
+    action?: () => void
+    buttonText?: string
+  }
+  Home: undefined
+  CreateIntro: undefined
+  CreatePlan: {
+    page: number
+  }
+  SignIn: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -51,12 +72,29 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
+  const { isAuthenticated } = useAuth()
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-    >
-          <Stack.Screen name="Welcome" component={Screens.WelcomeScreen} />
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
       {/** 🔥 Your screens go here */}
+      <Stack.Screen name="Splash" component={Screens.SplashScreen} />
+      {!isAuthenticated ? (
+        <>
+          <Stack.Screen name="WalkthroughScreen" component={Screens.WalkthroughScreen} />
+          <Stack.Screen name="SignUp" component={Screens.SignUpScreen} />
+          <Stack.Screen name="UserInfo" component={Screens.UserInfoScreen} />
+          <Stack.Screen name="UserPin" component={Screens.UserPinScreen} />
+          <Stack.Screen name="UserPinConfirmation" component={Screens.UserPinConfirmationScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Feedback" component={Screens.FeedbackScreen} />
+          <Stack.Screen name="Home" component={TabNavigator} />
+          <Stack.Screen name="CreateIntro" component={Screens.CreateIntroScreen} />
+          {/* <Stack.Screen name="CreatePlan" component={Screens.CreatePlanScreen} /> */}
+        </>
+      )}
+
+      <Stack.Screen name="SignIn" component={Screens.SignInScreen} />
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { isRTL, translate } from "../i18n"
-import { colors, spacing } from "../theme"
+import { colors, spacing, typography } from "../theme"
 import { ExtendedEdge, useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 import { Icon, IconTypes } from "./Icon"
 import { Text, TextProps } from "./Text"
@@ -198,8 +198,8 @@ export function Header(props: HeaderProps) {
             pointerEvents="none"
           >
             <Text
-              weight="medium"
-              size="md"
+              weight="bold"
+              size="xl"
               text={titleContent}
               style={[$title, $titleStyleOverride]}
             />
@@ -270,6 +270,7 @@ const $container: ViewStyle = {
 
 const $title: TextStyle = {
   textAlign: "center",
+  fontFamily: typography.secondary.bold,
 }
 
 const $actionTextContainer: ViewStyle = {

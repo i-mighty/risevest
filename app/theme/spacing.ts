@@ -1,16 +1,18 @@
+import { wp } from "./responsive"
+
 /**
   Use these spacings for margins/paddings and other whitespace throughout your app.
  */
 export const spacing = {
-  micro: 2,
-  tiny: 4,
-  extraSmall: 8,
-  small: 12,
-  medium: 16,
-  large: 24,
-  extraLarge: 32,
-  huge: 48,
-  massive: 64,
+  micro: wp(1),
+  tiny: wp(2),
+  extraSmall: wp(2.5),
+  small: wp(3),
+  medium: wp(4),
+  large: wp(6),
+  extraLarge: wp(8),
+  huge: wp(10),
+  massive: wp(12),
 } as const
 
 export type Spacing = keyof typeof spacing

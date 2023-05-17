@@ -3,6 +3,7 @@ import React from "react"
 import { StyleProp, Text as RNText, TextProps as RNTextProps, TextStyle } from "react-native"
 import { isRTL, translate, TxKeyPath } from "../i18n"
 import { colors, typography } from "../theme"
+import { hp } from "app/theme/responsive"
 
 type Sizes = keyof typeof $sizeStyles
 type Weights = keyof typeof typography.primary
@@ -74,7 +75,7 @@ export function Text(props: TextProps) {
 
 const $sizeStyles = {
   xxl: { fontSize: 36, lineHeight: 44 } as TextStyle,
-  xl: { fontSize: 24, lineHeight: 34 } as TextStyle,
+  xl: { fontSize: hp(3), lineHeight: hp(4) } as TextStyle,
   lg: { fontSize: 20, lineHeight: 32 } as TextStyle,
   md: { fontSize: 18, lineHeight: 26 } as TextStyle,
   sm: { fontSize: 16, lineHeight: 24 } as TextStyle,
@@ -97,13 +98,15 @@ const $presets = {
 
   bold: [$baseStyle, $fontWeightStyles.bold] as StyleProp<TextStyle>,
 
-  heading: [$baseStyle, $sizeStyles.xxl, $fontWeightStyles.bold] as StyleProp<TextStyle>,
+  heading: [$baseStyle, $sizeStyles.xxl, $fontWeightStyles.normal] as StyleProp<TextStyle>,
 
-  subheading: [$baseStyle, $sizeStyles.lg, $fontWeightStyles.medium] as StyleProp<TextStyle>,
+  subheading: [$baseStyle, $sizeStyles.xl, $fontWeightStyles.medium] as StyleProp<TextStyle>,
 
   formLabel: [$baseStyle, $fontWeightStyles.medium] as StyleProp<TextStyle>,
 
   formHelper: [$baseStyle, $sizeStyles.sm, $fontWeightStyles.normal] as StyleProp<TextStyle>,
+
+  subText: [$baseStyle, $sizeStyles.xs, $fontWeightStyles.normal] as StyleProp<TextStyle>,
 }
 
 const $rtlStyle: TextStyle = isRTL ? { writingDirection: "rtl" } : {}

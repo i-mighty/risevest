@@ -248,7 +248,7 @@ const $containerBase: ViewStyle = {
   shadowOpacity: 0.08,
   shadowRadius: 12.81,
   elevation: 16,
-  minHeight: 96,
+  // minHeight: 96,
   flexDirection: "row",
 }
 

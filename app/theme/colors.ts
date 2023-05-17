@@ -11,12 +11,15 @@ const palette = {
   neutral800: "#191015",
   neutral900: "#000000",
 
-  primary100: "#F4E0D9",
-  primary200: "#E8C1B4",
-  primary300: "#DDA28E",
-  primary400: "#D28468",
-  primary500: "#C76542",
-  primary600: "#A54F31",
+  primary100: "#41BCC4",
+  primary200: "#38B6BE",
+  primary300: "#2EB0B8",
+  primary400: "#25AAB2",
+  primary500: "#1BA4AC",
+  primary600: "#119EA6",
+  primary700: "#0898A0",
+
+  transparentGrey: "#71879C1F",
 
   secondary100: "#DCDDE9",
   secondary200: "#BCC0D6",
@@ -31,7 +34,11 @@ const palette = {
   accent500: "#FFBB50",
 
   angry100: "#F2D6CD",
-  angry500: "#C03403",
+  angry500: "#F34040",
+
+  success500: "#27BF41",
+
+  textNeutral: "#71879C",
 
   overlay20: "rgba(25, 16, 21, 0.2)",
   overlay50: "rgba(25, 16, 21, 0.5)",
@@ -55,11 +62,13 @@ export const colors = {
   /**
    * Secondary text information.
    */
-  textDim: palette.neutral600,
+  textDim: palette.textNeutral,
   /**
    * The default color of the screen background.
    */
-  background: palette.neutral200,
+  background: palette.neutral100,
+
+  shadowBackground: palette.transparentGrey,
   /**
    * The default border color.
    */
@@ -81,4 +90,40 @@ export const colors = {
    *
    */
   errorBackground: palette.angry100,
+  /**
+   * Success messages
+   *
+   */
+  success: palette.success500,
+}
+
+export function addOpacity(hex: string, opacity: number) {
+  // Check if the opacity is a valid value
+  if (opacity < 0 || opacity > 100) {
+    throw new Error("Opacity must be between 0 and 100")
+  }
+
+  // Convert the hex color to an array of RGB values
+  var rgb = hexToRgb(hex)
+
+  // Calculate the alpha channel value
+  var alpha = opacity / 100
+
+  // Create a new color with the specified opacity
+  return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`
+}
+
+// Helper function to convert a hex color to an array of RGB values
+export function hexToRgb(hex: string) {
+  // Remove the hash symbol from the hex string
+  hex = hex.replace("#", "")
+
+  // Convert the hex string to an array of RGB values
+  var rgb = [
+    parseInt(hex.substring(0, 2), 16),
+    parseInt(hex.substring(2, 4), 16),
+    parseInt(hex.substring(4, 6), 16),
+  ]
+
+  return rgb
 }

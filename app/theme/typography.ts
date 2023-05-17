@@ -10,12 +10,23 @@ import {
   SpaceGrotesk_700Bold as spaceGroteskBold,
 } from "@expo-google-fonts/space-grotesk"
 
+import {
+  DMSans_400Regular as DMsansRegular,
+  DMSans_500Medium as DMsansMedium,
+  DMSans_700Bold as DMsansBold,
+} from "@expo-google-fonts/dm-sans"
+
 export const customFontsToLoad = {
+  //space grotesk to be removed.
   spaceGroteskLight,
   spaceGroteskRegular,
   spaceGroteskMedium,
   spaceGroteskSemiBold,
   spaceGroteskBold,
+  //DM Sans
+  DMsansRegular,
+  DMsansMedium,
+  DMsansBold,
 }
 
 const fonts = {
@@ -26,6 +37,11 @@ const fonts = {
     medium: "spaceGroteskMedium",
     semiBold: "spaceGroteskSemiBold",
     bold: "spaceGroteskBold",
+  },
+  dmSans: {
+    normal: "DMsansRegular",
+    medium: "DMsansMedium",
+    bold: "DMsansBold",
   },
   helveticaNeue: {
     // iOS only font.
@@ -59,11 +75,11 @@ export const typography = {
   /**
    * The primary font. Used in most places.
    */
-  primary: fonts.spaceGrotesk,
+  primary: fonts.dmSans,
   /**
    * An alternate font used for perhaps titles and stuff.
    */
-  secondary: Platform.select({ ios: fonts.helveticaNeue, android: fonts.sansSerif }),
+  secondary: fonts.spaceGrotesk,
   /**
    * Lets get fancy with a monospace font!
    */
