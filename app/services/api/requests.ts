@@ -1,8 +1,23 @@
 import { NewUser } from "app/types/auth"
 import axios from "axios"
-const request = axios.create({
-  baseURL: "https://rise-rn-test-api-gb2v6.ondigitalocean.app",
+export const request = axios.create({
+  baseURL: "https://rise-rn-test-api-gb2v6.ondigitalocean.app/api/v1",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
 })
+
+export const requestWithAuth = (token: string) => {
+  return axios.create({
+    baseURL: "https://rise-rn-test-api-gb2v6.ondigitalocean.app/api/v1",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
 
 //Request types
 type SignUpRequestBody = NewUser & { password: string }
@@ -57,7 +72,7 @@ type GetSessionResponseBody = {
 export const GetSession = () => request.get<GetSessionResponseBody>("/sessions")
 
 //Response types
-type CreatePlanResponseBody = {
+export type CreatePlanResponseBody = {
   id: string
   created_at: string
   plan_name: string
@@ -69,7 +84,21 @@ type CreatePlanResponseBody = {
   returns: any[]
 }
 
-export const CreatePlan = () => request.post<CreatePlanResponseBody>("/plans")
+export type CreatePlanRequestBody = {
+  plan_name: string
+  target_amount: number
+  maturity_date: string
+}
+
+export const CreatePlan = async (data: CreatePlanRequestBody, token?: string) => {
+  try {
+    const req = token ? requestWithAuth(token) : request
+    const res = await req.post("/plans", JSON.stringify(data))
+    return res.data as CreatePlanResponseBody
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
 
 //Response types
 type GetPlansResponseBody = {
@@ -133,9 +162,7 @@ export const GetRates = () => request.get<GetRatesResponseBody>("/rates")
 //Response types
 type GetQuoteResponseBody = { quote: string; author: string }
 
-export const GetQuote = () =>
-  request.get<GetQuoteResponseBody>("/quotes").catch((e) => {
-    console.log("====================================")
-    console.log("some weird shit", e)
-    console.log("====================================")
-  })
+export const GetQuote = async () => {
+  const res = await request.get<GetQuoteResponseBody>("/quotes")
+  return res.data
+}

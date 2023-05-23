@@ -26,6 +26,8 @@ import Config from "./config"
 import { Provider as PaperProvider } from "react-native-paper"
 import { paperTheme } from "./theme/paperTheme"
 import { AuthProvider } from "./contexts/AuthContext"
+import { LoadingProvider } from "./contexts/LoadingContext"
+import Toast from "react-native-toast-message"
 
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
 // React Native apps. Learn more here: https://github.com/infinitered/reactotron
@@ -110,17 +112,20 @@ function App(props: AppProps) {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ErrorBoundary catchErrors={Config.catchErrors}>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <PaperProvider theme={paperTheme}>
-              <AppNavigator
-                linking={linking}
-                initialState={initialNavigationState}
-                onStateChange={onNavigationStateChange}
-              />
-            </PaperProvider>
-          </QueryClientProvider>
-        </AuthProvider>
+        <LoadingProvider>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <PaperProvider theme={paperTheme}>
+                <AppNavigator
+                  linking={linking}
+                  initialState={initialNavigationState}
+                  onStateChange={onNavigationStateChange}
+                />
+                <Toast />
+              </PaperProvider>
+            </QueryClientProvider>
+          </AuthProvider>
+        </LoadingProvider>
       </ErrorBoundary>
     </SafeAreaProvider>
   )

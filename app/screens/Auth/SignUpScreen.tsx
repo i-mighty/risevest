@@ -39,7 +39,12 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
       />
       <Form ref={formRef} schema={signUpValidationSchema} validationMode="all" criteriaMode="all">
         <FormInput fieldKey="email_address" placeholder="Email" label={"Email"} />
-        <PasswordFormInput fieldKey="password" placeholder="Password" label={"Password"} />
+        <PasswordFormInput
+          fieldKey="password"
+          placeholder="Password"
+          label={"Password"}
+          hasValidation
+        />
       </Form>
       <View style={{ marginVertical: spacing.medium }}>
         <Button
@@ -48,7 +53,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = observer(function SignUpScree
           onPress={() =>
             formRef.current.submit((values) => {
               navigation.navigate("UserInfo", {
-                email_address: values.email,
+                email_address: values.email_address,
                 password: values.password,
               })
             })

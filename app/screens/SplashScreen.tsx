@@ -1,23 +1,14 @@
 import React, { FC, useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle, Image, TextStyle, ImageStyle } from "react-native"
-import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { AppStackScreenProps } from "app/navigators"
 import { Screen, Text } from "app/components"
 import { colors, spacing } from "app/theme"
 import { useAuth } from "app/hooks/useAuth"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
 
 interface SplashScreenProps extends AppStackScreenProps<"Splash"> {}
 
 export const SplashScreen: FC<SplashScreenProps> = observer(function SplashScreen({ navigation }) {
-  // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
-
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
-
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {
@@ -28,7 +19,7 @@ export const SplashScreen: FC<SplashScreenProps> = observer(function SplashScree
     return () => {
       clearTimeout(timeout)
     }
-  }, [])
+  }, [isAuthenticated])
 
   return (
     <Screen style={$root} preset="fixed" StatusBarProps={{ hidden: true }}>

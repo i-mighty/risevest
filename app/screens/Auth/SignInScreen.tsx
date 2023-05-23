@@ -15,22 +15,31 @@ import YupPassword from "yup-password"
 import FormInput from "app/features/Form/FormInput"
 import PasswordFormInput from "app/features/Form/PasswordFormInput"
 import PlainButton from "app/components/PlainButton"
+import { useAuth } from "app/hooks/useAuth"
 YupPassword(yup) // extend yup
 
 const SignInValidationSchema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().password().minNumbers(0).required(),
+  email_address: yup.string().email().required(),
+  // password: yup.string().password().minNumbers(0).required(),
 })
 
 interface SignInScreenProps extends AppStackScreenProps<"SignIn"> {}
 
-export const SignInScreen: FC<SignInScreenProps> = observer(function SignInScreen() {
+export const SignInScreen: FC<SignInScreenProps> = observer(function SignInScreen({ navigation }) {
   // Pull in one of our MST stores
   // const { someStore, anotherStore } = useStores()
+  const { login } = useAuth()
 
   // Pull in navigation via hook
   // const navigation = useNavigation()
   const formRef = useRef<FormRef>()
+
+  const loginAction = (values: { email_address: string; password: string }) => {
+    login(values, () => {
+      //
+      navigation.navigate("UserPin")
+    })
+  }
 
   return (
     <Screen style={$root} safeAreaEdges={["top"]} preset="scroll">
@@ -38,22 +47,20 @@ export const SignInScreen: FC<SignInScreenProps> = observer(function SignInScree
       <Text
         style={$description}
         text={
-          "Let’s get you logged in to get back to building\nyour dollar-denominated investment portfolio.o"
+          "Let’s get you logged in to get back to building\nyour dollar-denominated investment portfolio"
         }
       />
       <Form ref={formRef} schema={SignInValidationSchema} validationMode="all" criteriaMode="all">
-        <FormInput fieldKey="email" placeholder="Email" label={"Email"} />
+        <FormInput fieldKey="email_address" placeholder="Email" label={"Email"} />
         <PasswordFormInput fieldKey="password" placeholder="Password" label={"Password"} />
       </Form>
       <View style={{ marginVertical: spacing.medium }}>
         <Button
-          text="Sign Up"
+          text="Sign In"
           preset="filled"
           onPress={() =>
             formRef.current.submit((values) => {
-              console.log("====================================")
-              console.log("values", values)
-              console.log("====================================")
+              loginAction(values as unknown as { email_address: string; password: string })
             })
           }
         />

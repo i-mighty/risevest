@@ -41,15 +41,14 @@ export const UserInfoScreen: FC<UserInfoScreenProps> = observer(function UserInf
   const [loading, setLoading] = useState(false)
 
   const signUpAction = (values: NewUser) => {
-    setLoading(true)
     signup(values, () => {
       //
-      setLoading(false)
       navigation.navigate("Feedback", {
-        title: "",
-        description: "",
+        title: "You just created your\nRise account",
+        description: "Welcome to Rise, let’s take\nyou home",
         action: () => {
           //navigate to SetPin then continue
+          navigation.navigate("SignIn")
         },
       })
     })
@@ -63,7 +62,7 @@ export const UserInfoScreen: FC<UserInfoScreenProps> = observer(function UserInf
       <Form ref={formRef} schema={infoValidationSchema} defaultValues={params}>
         <FormInput fieldKey="first_name" label={"Legal First Name"} />
         <FormInput fieldKey="last_name" label={"Legal Last Name"} />
-        <FormInput fieldKey="nick_name" label={"Nick Name"} />
+        <FormInput fieldKey="username" label={"Nick Name"} />
         <FormPhoneNumberInput
           fieldKey="phone_number"
           label={"Phone Number"}
@@ -88,9 +87,17 @@ export const UserInfoScreen: FC<UserInfoScreenProps> = observer(function UserInf
           onPress={() =>
             formRef.current.submit((values) => {
               console.log("====================================")
-              console.log("values", { ...values, ...params })
+              console.log("values", {
+                ...values,
+                phone_number: `+234${values.phone_number}`,
+                ...params,
+              })
               console.log("====================================")
-              signUpAction(values as NewUser)
+              signUpAction({
+                ...values,
+                phone_number: `+234${values.phone_number}`,
+                ...params,
+              } as NewUser)
             })
           }
         />

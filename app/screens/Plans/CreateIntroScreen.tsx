@@ -41,7 +41,9 @@ const sections: Section[] = [
       "You are in charge. Make changes to your\nplan, from adding funds, funding source,\nadding money to your wallet and more.",
   },
 ]
-export const CreateIntroScreen: FC<CreateIntroScreenProps> = observer(function CreateIntroScreen() {
+export const CreateIntroScreen: FC<CreateIntroScreenProps> = observer(function CreateIntroScreen({
+  navigation,
+}) {
   // Pull in one of our MST stores
   // const { someStore, anotherStore } = useStores()
 
@@ -83,7 +85,13 @@ export const CreateIntroScreen: FC<CreateIntroScreenProps> = observer(function C
           </View>
         ))}
       </View>
-      <Button text="Continue" preset="filled" />
+      <Button
+        onPress={() => {
+          navigation.navigate("CreatePlan")
+        }}
+        text="Continue"
+        preset="filled"
+      />
     </View>
   )
 })

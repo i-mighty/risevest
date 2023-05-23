@@ -6,5 +6,5 @@
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
 export default {
-  API_URL: "http://rise-rn-test-api.herokuapp.com/api/v1",
+  API_URL: "https://rise-rn-test-api-gb2v6.ondigitalocean.app/api/v1",
 }

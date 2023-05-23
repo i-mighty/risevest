@@ -2,14 +2,20 @@ import React, { createContext, useState, useEffect, useContext, ReactNode } from
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { api } from "app/services/api"
 import { NewUser, UserSession } from "app/types/auth"
+import { request } from "app/services/api/requests"
+import { useLoading } from "app/hooks/useLoading"
 
 // Define types
 export type AuthContextType = {
   user: UserSession | null
   isAuthenticated: boolean
   newInstall: boolean
-  login: ({ email, password }: { email: string; password: string }, onComplete: () => void) => void
-  signup: (newUser: NewUser, onComplete: () => void) => void
+  login: (
+    { email_address, password }: { email_address: string; password: string },
+    onComplete: () => void,
+    onError?: (err?: any) => void,
+  ) => void
+  signup: (newUser: NewUser, onComplete: () => void, onError?: (err?: any) => void) => void
   logout: () => void
   savePinCode: (pinCode: string | null) => void
   pinCodeMatches: (pin: string) => boolean
@@ -25,7 +31,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<UserSession | null>(null)
   const [pinCode, setPinCode] = useState<string | null>(null)
   const [newInstall, setNewInstall] = useState(false)
-  const isAuthenticated = !!user
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user)
+  useEffect(() => {
+    console.log("====================================")
+    console.log("auth state:", isAuthenticated)
+    console.log("====================================")
+  }, [isAuthenticated])
+
+  const { showLoading, hideLoading } = useLoading()
 
   // Load user and pin code from storage on component mount
   useEffect(() => {
@@ -48,6 +61,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const storedUser = await AsyncStorage.getItem("user")
     if (storedUser) {
       setUser(JSON.parse(storedUser))
+      setIsAuthenticated(true)
     }
   }
 
@@ -68,6 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Save user to storage
   const saveUser = async (user: UserSession | null) => {
+    setUser(user)
     if (user) {
       await AsyncStorage.setItem("user", JSON.stringify(user))
     } else {
@@ -86,50 +101,60 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Login function
   const login = async (
-    { email, password }: { email: string; password: string },
+    values: { email_address: string; password: string },
     onComplete: () => void,
+    onError?: (err?: any) => void,
   ) => {
     try {
-      const response = await api.apisauce.post<UserSession>("/sessions", { email, password })
+      showLoading("Signing in...")
+      const response = await request.post<UserSession>("/sessions", JSON.stringify(values))
 
-      if (response.ok) {
+      if (response.status === 200) {
         const loggedInUser = response.data
-        setUser(loggedInUser)
+        setIsAuthenticated(true)
+
         await saveUser(loggedInUser)
+        hideLoading()
         onComplete()
       } else {
         // Handle login error
         // For example, display an error message
+        onError && onError(response.data)
         console.error("Login failed")
+        hideLoading()
       }
     } catch (error) {
+      hideLoading()
+
+      onError && onError(error)
       // Handle network or other errors
       console.error("Error occurred during login:", error)
     }
   }
 
   // Signup function
-  const signup = async (newUser: NewUser, onComplete: () => void) => {
+  const signup = async (newUser: NewUser, onComplete: () => void, onError?: (err?: any) => any) => {
     try {
-      const response = await api.apisauce.post("/users", newUser)
-
-      if (response.ok) {
-        // finish and go to login
+      showLoading("Signing up...")
+      const response = await request.post("/users", JSON.stringify(newUser))
+      if (response.status == 200) {
+        hideLoading()
         onComplete()
       } else {
-        // Handle signup error
-        // For example, display an error message
-        console.error("Signup failed", response.originalError)
+        hideLoading()
+        onError && onError(response.data)
+        console.error("Signup failed", response.data)
       }
     } catch (error) {
-      // Handle network or other errors
+      hideLoading()
+      onError && onError(error)
       console.error("Error occurred during signup:", error)
     }
   }
 
   // Logout function
   const logout = async () => {
-    setUser(null)
+    setIsAuthenticated(false)
     await saveUser(null)
   }
 

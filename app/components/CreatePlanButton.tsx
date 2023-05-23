@@ -9,6 +9,7 @@ import { Text, TextProps } from "./Text"
 import { Ionicons } from "@expo/vector-icons"
 import { addOpacity, colors, spacing } from "app/theme"
 import { wp, hp } from "app/theme/responsive"
+import { useNavigation } from "@react-navigation/native"
 
 interface IButtonProps extends TouchableWithoutFeedbackProps {
   loading?: boolean
@@ -16,10 +17,11 @@ interface IButtonProps extends TouchableWithoutFeedbackProps {
 
 const PlainButton: React.FC<IButtonProps> = (props) => {
   const { loading, onPress, ...rest } = props
-
+  const navigation = useNavigation()
   const onInternalButtonPress = (event: any) => {
     //other actions
-
+    //@ts-ignore
+    navigation.navigate("CreateIntro")
     onPress?.(event)
   }
 

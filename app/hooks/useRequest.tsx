@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient, UseQueryOptions } from "react-qu
 
 export function useRequestProcessor() {
   const queryClient = useQueryClient()
-
   function query(queryKey: string, queryFunction: any, options: UseQueryOptions) {
     return useQuery({
       queryKey,

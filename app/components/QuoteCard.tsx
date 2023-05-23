@@ -4,17 +4,12 @@ import React, { useEffect } from "react"
 import { View, ViewStyle } from "react-native"
 import { Text } from "./Text"
 import { useRequestProcessor } from "app/hooks/useRequest"
-import { GetQuote } from "app/services/api/requests"
+import { useQuote } from "app/hooks/useQuote"
 
 export function QuoteCard() {
   const { query } = useRequestProcessor()
 
-  const { data } = query("quote", GetQuote, { enabled: true })
-  useEffect(() => {
-    console.log("====================================")
-    console.log("quote", data)
-    console.log("====================================")
-  }, [data])
+  const { data: quoteData } = useQuote()
   return (
     <View
       style={[
@@ -38,12 +33,15 @@ export function QuoteCard() {
       <Text
         preset="subText"
         style={{ color: colors.background }}
-        text="We have no intention of rotating capital out of strong multi-year investments because they’ve recently done well or because ‘growth’ has out performed ‘value’."
+        text={
+          quoteData?.quote ||
+          "We have no intention of rotating capital out of strong multi-year investments because they’ve recently done well or because ‘growth’ has out performed ‘value’."
+        }
       />
       <Text
         preset="formLabel"
         style={{ color: colors.background, marginTop: hp(2) }}
-        text={"Carl Segan"}
+        text={quoteData?.author || "Carl Segan"}
       />
     </View>
   )

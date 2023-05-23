@@ -16,6 +16,7 @@ import { ExpandingDot, SlidingDot } from "react-native-animated-pagination-dots"
 import { ShadowIcon } from "app/components/ShadowIcon"
 import PlansList from "app/components/PlansList"
 import QuoteCard from "app/components/QuoteCard"
+import { useAuth } from "app/hooks/useAuth"
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "app/models"
@@ -29,7 +30,14 @@ export const HomeScreen: FC<HomeScreenProps> = observer(function HomeScreen() {
   // Pull in navigation via hook
   // const navigation = useNavigation()
   const scrollX = React.useRef(new Animated.Value(0)).current
-
+  const { user } = useAuth()
+  const calculateReturns = () => {
+    if (user.total_balance && user.total_returns) {
+      return (user.total_returns / user.total_balance) * 100
+    } else {
+      return 0
+    }
+  }
   return (
     <Screen style={$root} preset="scroll">
       <LinearGradient
@@ -44,7 +52,7 @@ export const HomeScreen: FC<HomeScreenProps> = observer(function HomeScreen() {
         <View style={$row}>
           <View>
             <Text text="Good morning ☀" />
-            <Text style={{ fontSize: 20 }} text="Deborah" />
+            <Text style={{ fontSize: 20 }} text={user.first_name} />
           </View>
 
           <PlainButton>
@@ -97,7 +105,11 @@ export const HomeScreen: FC<HomeScreenProps> = observer(function HomeScreen() {
               style={{ marginLeft: wp(2), marginTop: 2 }}
             />
           </View>
-          <Text preset="heading" text="$0.00" style={{ marginVertical: hp(1) }} />
+          <Text
+            preset="heading"
+            text={`$${user.total_balance || "0.00"}`}
+            style={{ marginVertical: hp(1) }}
+          />
           <Divider />
           <View
             style={{
@@ -111,14 +123,20 @@ export const HomeScreen: FC<HomeScreenProps> = observer(function HomeScreen() {
               borderColor: colors.palette.primary700,
             }}
           >
-            <Text text="Total Gains" style={{ color: colors.textDim }} />
+            <Text
+              text={calculateReturns() >= 0 ? "Total Gains" : "Total Loss"}
+              style={{ color: colors.textDim }}
+            />
             <MaterialCommunityIcons
-              name="arrow-top-right"
+              name={calculateReturns() >= 0 ? "arrow-top-right" : "arrow-bottom-right"}
               size={14}
-              color={colors.error}
+              color={calculateReturns() >= 0 ? colors.success : colors.error}
               style={{ marginHorizontal: wp(2), marginTop: 2 }}
             />
-            <Text text="0.02%" style={{ color: colors.success }} />
+            <Text
+              text={`${calculateReturns()}%`}
+              style={{ color: calculateReturns() >= 0 ? colors.success : colors.error }}
+            />
             <Ionicons
               name="chevron-forward"
               size={14}

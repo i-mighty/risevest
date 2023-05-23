@@ -14,7 +14,7 @@ export const TabNavigator = () => {
       labeled={false}
     >
       <Tab.Screen
-        name="Home"
+        name="HomePage"
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" color={color} size={26} />,

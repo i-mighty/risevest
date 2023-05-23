@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react"
+import React, { FC, useEffect, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
@@ -9,15 +9,27 @@ import SmoothPinCodeInput from "@dreamwalk-os/react-native-smooth-pincode-input"
 import NumPad from "app/components/NumPad"
 import { useHeader } from "app/utils/useHeader"
 import { Octicons } from "@expo/vector-icons"
+import { useAuth } from "app/hooks/useAuth"
 
 interface UserPinConfirmationScreenProps extends AppStackScreenProps<"UserPinConfirmation"> {}
 
 export const UserPinConfirmationScreen: FC<UserPinConfirmationScreenProps> = observer(
   function UserPinConfirmationScreen({ route, navigation }) {
+    const params = route.params
     const [pin, setPin] = useState("")
+    const { savePinCode } = useAuth()
     useHeader({
       LeftActionComponent: <BackButton />,
     })
+    useEffect(() => {
+      if (pin.length == 6) {
+        if (pin == params.pin) {
+          savePinCode(pin)
+          //Goto home
+          navigation.navigate("Home")
+        }
+      }
+    }, [pin, params.pin])
     // const [isConfirming, setIsConfirming] = useState(false)
     const pinRef = useRef()
     const update = (val: string) => {

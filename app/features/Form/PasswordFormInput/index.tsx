@@ -6,7 +6,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 import _ from "lodash"
 import { colors, spacing } from "app/theme"
 import { Text } from "app/components"
-const PasswordFormInput: React.FC<FormInputProps> = (props) => {
+const PasswordFormInput: React.FC<FormInputProps & { hasValidation?: boolean }> = ({
+  hasValidation,
+  ...props
+}) => {
   const [showPassword, setShowPassword] = useState(false)
   const errors = props.errors
   const fieldKey = props.fieldKey
@@ -59,7 +62,9 @@ const PasswordFormInput: React.FC<FormInputProps> = (props) => {
         }
         {...props}
       />
-      <View style={{ marginTop: spacing.medium }}>{renderValidationRadio()}</View>
+      {hasValidation && (
+        <View style={{ marginTop: spacing.medium }}>{renderValidationRadio()}</View>
+      )}
     </>
   )
 }

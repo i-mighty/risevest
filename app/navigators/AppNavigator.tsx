@@ -14,6 +14,7 @@ import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { useAuth } from "app/hooks/useAuth"
 import { TabNavigator } from "./TabNavigator"
+import { CreatePlanResponseBody } from "app/services/api/requests"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -54,6 +55,9 @@ export type AppStackParamList = {
     page: number
   }
   SignIn: undefined
+  PlanDetails: {
+    plan: CreatePlanResponseBody
+  }
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -80,21 +84,25 @@ const AppStack = observer(function AppStack() {
       {!isAuthenticated ? (
         <>
           <Stack.Screen name="WalkthroughScreen" component={Screens.WalkthroughScreen} />
+          <Stack.Screen name="SignIn" component={Screens.SignInScreen} />
           <Stack.Screen name="SignUp" component={Screens.SignUpScreen} />
           <Stack.Screen name="UserInfo" component={Screens.UserInfoScreen} />
           <Stack.Screen name="UserPin" component={Screens.UserPinScreen} />
           <Stack.Screen name="UserPinConfirmation" component={Screens.UserPinConfirmationScreen} />
+          <Stack.Screen name="Feedback" component={Screens.FeedbackScreen} />
         </>
       ) : (
         <>
+          <Stack.Screen name="UserPin" component={Screens.UserPinScreen} />
+          <Stack.Screen name="UserPinConfirmation" component={Screens.UserPinConfirmationScreen} />
           <Stack.Screen name="Feedback" component={Screens.FeedbackScreen} />
           <Stack.Screen name="Home" component={TabNavigator} />
           <Stack.Screen name="CreateIntro" component={Screens.CreateIntroScreen} />
-          {/* <Stack.Screen name="CreatePlan" component={Screens.CreatePlanScreen} /> */}
+          <Stack.Screen name="CreatePlan" component={Screens.CreatePlanScreen} />
         </>
       )}
 
-      <Stack.Screen name="SignIn" component={Screens.SignInScreen} />
+      <Stack.Screen name="PlanDetails" component={Screens.PlanDetailsScreen} />
       {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )

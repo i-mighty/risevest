@@ -52,6 +52,7 @@ const $iconContainer: ViewStyle = {
 
 const $heading: TextStyle = {
   marginTop: spacing.huge,
+  textAlign: "center",
   fontFamily: typography.fonts.spaceGrotesk.semiBold,
 }
 

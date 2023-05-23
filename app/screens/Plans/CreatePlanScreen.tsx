@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react"
+import React, { FC, useEffect, useRef } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
@@ -14,17 +14,21 @@ import FormInput from "app/features/Form/FormInput"
 import FormDateTimeInput from "app/features/Form/FormDateTimeInput"
 import { yupResolver } from "@hookform/resolvers/yup"
 import FormCurrencyInput from "app/features/Form/FormCurrencyInput"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
+import { useLoading } from "app/hooks/useLoading"
+import { useCreatePlan } from "app/hooks/useCreatePlan"
+import { CreatePlanRequestBody } from "app/services/api/requests"
+import Toast from "react-native-toast-message"
+import { showToast } from "app/utils/alert"
+import { useAuth } from "app/hooks/useAuth"
 
 interface CreatePlanScreenProps extends AppStackScreenProps<"CreatePlan"> {}
 const schema = yup.object().shape({
-  name: yup.string().required(),
-  amount: yup.string().required(),
-  target: yup.date().required(),
+  plan_name: yup.string().required(),
+  target_amount: yup.string().required(),
+  maturity_date: yup.date().required(),
 })
 
-const fields = ["name", "amount", "target"]
+const fields = ["plan_name", "target_amount", "maturity_date"]
 export const CreatePlanScreen: FC<CreatePlanScreenProps> = observer(function CreatePlanScreen({
   route,
   navigation,
@@ -34,7 +38,16 @@ export const CreatePlanScreen: FC<CreatePlanScreenProps> = observer(function Cre
 
   // Pull in navigation via hook
   // const navigation = useNavigation()
-
+  const { showLoading, hideLoading } = useLoading()
+  const { user } = useAuth()
+  const { mutate: createPlan } = useCreatePlan()
+  // useEffect(() => {
+  //   showToast({
+  //     text1: "Error",
+  //     text2: planError as string,
+  //     type: "error",
+  //   })
+  // }, [planError])
   const formRef = useRef<FormRef>()
 
   const page = route.params?.page || 1
@@ -85,13 +98,13 @@ export const CreatePlanScreen: FC<CreatePlanScreenProps> = observer(function Cre
     switch (page) {
       case 1:
       default:
-        return <FormInput fieldKey="name" />
+        return <FormInput fieldKey="plan_name" />
       case 2:
-        return <FormCurrencyInput prefix="₦" fieldKey="amount" />
+        return <FormCurrencyInput prefix="₦" fieldKey="target_amount" />
       case 3:
         return (
           <FormDateTimeInput
-            fieldKey="target"
+            fieldKey="maturity_date"
             dateFormat="DD-MM-YYYY"
             datePickerProps={{ selectorMode: "date" }}
             inputProps={{
@@ -102,12 +115,36 @@ export const CreatePlanScreen: FC<CreatePlanScreenProps> = observer(function Cre
     }
   }
 
-  const submitAction = () => {
+  const submitAction = async () => {
     const errors = formRef.current.formState.errors
     console.log("errors", errors)
 
     if (page == 3) {
-      // actually submit
+      if (!errors[fields[page - 1]]) {
+        showLoading("Creating Plan...")
+        const values = formRef.current.control._formValues as CreatePlanRequestBody
+        createPlan(values, {
+          onSuccess: (data) => {
+            hideLoading()
+            navigation.navigate("Feedback", {
+              title: "You just created\nyour plan.",
+              description: `Well done ${user.first_name}`,
+              action: () => {
+                navigation.navigate("PlanDetails", { plan: data })
+              },
+            })
+          },
+          onError: (error: any) => {
+            showToast({
+              text1: "Error",
+              text2: error.message as string,
+              type: "error",
+            })
+            hideLoading()
+          },
+        })
+      }
+
       // navigation.setParams({ page: 1 })
     } else {
       if (!errors[fields[page - 1]]) {
